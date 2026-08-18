@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Index Page</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <style>
+      
+    </style>
+    <h1>Welcome to my HTML Rendering</h1>
+    <!-- <a href="{% url 'about' %}"></a> -->
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti nam atque cupiditate voluptates dignissimos. Atque ducimus tempore explicabo ipsum nemo? Quia, saepe numquam adipisci nemo eius necessitatibus deserunt vero! Temporibus!</p>
+    <!-- <img src="../static/images/microsoft-copilot-hkKRe01teO4-unsplash.jpg" alt=""> -->
+     <img src="{% static 'images/images.jpg' %}" alt="" width="500">
+    <br>
+    <a href="/about"><button>About Page</button></a>
+    <a href="{% url 'posts' %}"><button>Posts Page</button></a>
+    <a href="{% url 'student_list' %}"><button>Students Page</button></a>
+</body>
+</html>

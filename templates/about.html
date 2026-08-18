@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Page</title>
+</head>
+<body>
+    <h1>This is my About Page</h1>
+    <p>{{dml}}</p>
+    <h2>The Developer's name is {{prog_name}}</h2>
+    <h2>The G.O.A.T is {{GOAT}}</h2>
+    <h1>{{best_players}}</h1>
+
+    {% for player in best_players %}
+    <p style="padding: 10px 100px">{{player}} {% if player == "Messi"%}<span>GOAT</span>{% endif%}</p>
+    {% endfor%}
+    <a href="/">Home Page</a>
+</body>
+</html>

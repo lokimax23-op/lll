@@ -1,0 +1,46 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{post.name}}</title>
+
+    <link rel="stylesheet" href="{% static 'css/output.css' %}" />
+</head>
+<body>
+     <div class="postcard">
+        <!-- Message Panel -->
+        <div class="message-side">
+            <div class="message-text">
+                <p>{{post.name}}</p>
+                <br>
+                <p>{{post.body}}</p>
+                <br>
+                <p>Best regards,<br>Alex</p>
+            </div>
+             <div>
+            <a href="{% url 'posts'  %}">Go back</a>
+        </div>
+        </div>
+        
+        <!-- Center Divider -->
+        <div class="divider"></div>
+
+        <!-- Shipping & Address Panel -->
+        <div class="address-side">
+            <div class="stamp-box">
+                Place<br>Stamp
+            </div>
+            
+            <div class="address-lines">
+                <div class="line">Jane Doe</div>
+                <div class="line">123 Innovation Way</div>
+                <div class="line">Tech City, CA 94016</div>
+            </div>
+        </div>
+       
+    </div>
+    script src="{% static 'js/post.js' %}"></script>
+</body>
+</html>

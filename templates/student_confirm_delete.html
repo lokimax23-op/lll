@@ -1,0 +1,369 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Student - Confirmation</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .page-shell {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 500px;
+            animation: fadeInScale 0.6s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            padding: 50px 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            transform: translateX(-50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+        }
+
+        .page-header::after {
+            content: '⚠';
+            position: absolute;
+            font-size: 100px;
+            opacity: 0.1;
+            bottom: -20px;
+            right: 20px;
+            z-index: 0;
+        }
+
+        .eyebrow {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Delete Message */
+        .card > p,
+        .delete-form {
+            padding: 40px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .delete-message {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #374151;
+            text-align: center;
+            margin: 0;
+        }
+
+        .delete-message strong {
+            color: #dc2626;
+            font-weight: 700;
+            display: block;
+            margin: 15px 0;
+            font-size: 18px;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fee2e2;
+            border: 2px solid #fecaca;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .warning-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+            animation: bounce 1s ease-in-out 0.3s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .warning-text {
+            color: #7f1d1d;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Form Styles */
+        .delete-form {
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            padding: 30px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            flex-direction: column;
+        }
+
+        .form-actions .btn {
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            position: relative;
+            z-index: 1;
+            animation: slideInLeft 0.5s ease-out 0.3s both;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-danger:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #374151;
+            border: 2px solid #e5e7eb;
+            position: relative;
+            z-index: 1;
+            animation: slideInRight 0.5s ease-out 0.4s both;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .page-header {
+                padding: 40px 30px;
+            }
+
+            .page-header h1 {
+                font-size: 22px;
+            }
+
+            .card > p,
+            .delete-form {
+                padding: 30px 20px;
+            }
+
+            .delete-message {
+                font-size: 14px;
+            }
+
+            .delete-message strong {
+                font-size: 16px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+
+        :focus-visible {
+            outline: 2px solid #ef4444;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <div class="card danger-card">
+            <div class="page-header">
+                <p class="eyebrow">⚠️ Confirm Action</p>
+                <h1>Delete Student</h1>
+            </div>
+
+            <p class="delete-message">
+                Are you sure you want to delete <strong>{{ student.first_name }} {{ student.last_name }}</strong>?
+                <br><br>
+                This action cannot be undone and will permanently remove all records associated with this student.
+            </p>
+
+            <form method="post" class="delete-form">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-danger">🗑️ Yes, Delete Permanently</button>
+                    <a href="{% url 'student_detail' student.pk %}" class="btn btn-secondary">← Cancel & Go Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

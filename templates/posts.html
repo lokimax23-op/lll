@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Postcard Template</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Georgia', serif;
+            
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        /* Classic 6x4 physical postcard aspect ratio */
+        .postcard {
+            background: #fffdf6;
+            width: 100%;
+            max-width: 700px;
+            height: 450px;
+            padding: 30px;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+            border: 1px solid #e0dad0;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        /* Left Message Side */
+        .message-side {
+            width: 50%;
+            padding-right: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .message-text {
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        /* Vertical Divider Line */
+        .divider {
+            position: absolute;
+            left: 50%;
+            top: 10%;
+            bottom: 10%;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, #b5af9e, transparent);
+        }
+        /* Right Address & Stamp Side */
+        .address-side {
+            width: 50%;
+            padding-left: 35px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+        }
+        /* Faux Stamp Container */
+        .stamp-box {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 95px;
+            border: 2px dashed #b5af9e;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: #8a8373;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        /* Address Lines */
+        .address-lines {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .line {
+            height: 40px;
+            border-bottom: 1px solid #b5af9e;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-end;
+            font-size: 1.05rem;
+            color: #222;
+            padding-left: 5px;
+        }
+        stories{
+            text-align: center;
+        }
+        /* Responsive handling for smaller viewport displays */
+        @media (max-width: 600px) {
+            .postcard {
+                flex-direction: column;
+                height: auto;
+            }
+            .message-side, .address-side {
+                width: 100%;
+                padding: 0;
+            }
+            .message-side {
+                margin-bottom: 40px;
+            }
+            .divider {
+                display: none;
+            }
+            .stamp-box {
+                position: relative;
+                margin-bottom: 20px;
+                float: right;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stories"><h1>Our stories({{posts.count}})</h1></div>
+    {% for post in posts %}
+    <div class="postcard">
+        <!-- Message Panel -->
+        <div class="message-side">
+            <div class="message-text">
+                <p>{{post.name}}</p>
+                <br>
+                <p>{{post.body | truncatewords:15}}</p>
+                <br>
+                <p>Best regards,<br>Alex</p>
+            </div>
+             <div>
+            <a href="{% url 'post' post.id %}">Read more...</a>
+        </div>
+        </div>
+
+        <!-- Center Divider -->
+        <div class="divider"></div>
+
+        <!-- Shipping & Address Panel -->
+        <div class="address-side">
+            <div class="stamp-box">
+                Place<br>Stamp
+            </div>
+            
+            <div class="address-lines">
+                <div class="line">Jane Doe</div>
+                <div class="line">123 Innovation Way</div>
+                <div class="line">Tech City, CA 94016</div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html>

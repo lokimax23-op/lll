@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create User Account</title>
+    <style>
+        body {
+            background-color: aliceblue;
+            padding: 5px;
+            color: aliceblue;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        {% for message in messages %}
+        <p class="message">{{message}}</p>
+        {% endfor %}
+        <h2>{{form_name}}</h2>
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{form}}
+            <button type="submit">Create Account</button>
+        </form>
+    </div>
+</body>
+</html>
