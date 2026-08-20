@@ -6,19 +6,204 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Index Page</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #080808, #170606, #090909);
+            min-height: 100vh;
+            color: #f5f5f5;
+        }
+
+        nav {
+            background: linear-gradient(145deg, #171717, #0d0d0d);
+            border-bottom: 1px solid #7f1d1d;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.15);
+        }
+
+        .nav-brand {
+            font-size: 20px;
+            font-weight: bold;
+            color: #dc2626;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-links a, .nav-links button {
+            color: #d1d5db;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover, .nav-links button:hover {
+            color: #dc2626;
+            background-color: rgba(220, 38, 38, 0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-greeting {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: #dc2626;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #d1d5db;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.2);
+        }
+
+        .buttons-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button, a.btn {
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        button:hover, a.btn:hover {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-    <style>
-      
-    </style>
-    <h1>Welcome to my HTML Rendering</h1>
-    <!-- <a href="{% url 'about' %}"></a> -->
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti nam atque cupiditate voluptates dignissimos. Atque ducimus tempore explicabo ipsum nemo? Quia, saepe numquam adipisci nemo eius necessitatibus deserunt vero! Temporibus!</p>
-    <!-- <img src="../static/images/microsoft-copilot-hkKRe01teO4-unsplash.jpg" alt=""> -->
-     <img src="{% static 'images/images.jpg' %}" alt="" width="500">
-    <br>
-    <a href="/about"><button>About Page</button></a>
-    <a href="{% url 'posts' %}"><button>Posts Page</button></a>
-    <a href="{% url 'student_list' %}"><button>Students Page</button></a>
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="nav-brand">MyApp</div>
+        <ul class="nav-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'posts' %}">Posts</a></li>
+            <li><a href="{% url 'student_list' %}">Students</a></li>
+        </ul>
+        <div class="user-info">
+            {% if user.is_authenticated %}
+                <div class="user-greeting">
+                    Welcome, <strong>{{ user.username }}</strong>
+                </div>
+                <div class="auth-buttons">
+                    <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">Logout</button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="auth-buttons">
+                    <a href="{% url 'login' %}" class="login-btn">Login</a>
+                </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Welcome to my HTML Rendering</h1>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti nam atque cupiditate voluptates dignissimos. Atque ducimus tempore explicabo ipsum nemo? Quia, saepe numquam adipisci nemo eius necessitatibus deserunt vero! Temporibus!</p>
+        
+        {% if request.user.is_authenticated %}
+            <img src="{% static 'images/images.jpg' %}" alt="" width="500">
+        {% endif %}
+
+        <div class="buttons-group">
+            <a href="/about" class="btn">About Page</a>
+            <a href="{% url 'posts' %}" class="btn">Posts Page</a>
+            <a href="{% url 'student_list' %}" class="btn">Students Page</a>
+        </div>
+    </div>
 </body>
 </html>

@@ -1,16 +1,19 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from django.contrib.auth.views import LogoutView
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.views import View
 from projectapp.models import Post, Student
 from projectapp.forms import PostForm, StudentForm
 
 # Create your views here.
 
 def home(request):
-    # return HttpResponse("Welcome to my home page")
-    return render(request, "index.html")
+    context = {'user': request.user}
+    return render(request, "index.html", context)
 
 def about(request):
     about_message = """
@@ -29,6 +32,7 @@ def profile(request):
     }
     return JsonResponse(me)
 
+@login_required
 def posts(request):
     posts = Post.objects.all()
     context = {"posts": posts}
@@ -52,30 +56,34 @@ def submit_form(request):
         return JsonResponse(values)
     return redirect("user_form")
 
+@login_required
 def add_post(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Post created successfully!")
             return redirect("posts")
     else:
         form = PostForm()
 
-    context = {"post_form": form}
+    context = {"post_form": form, "title": "Add Post"}
     return render(request, "post_form.html", context)
 
 
+@login_required
 def edit_post(request, pk):
     the_post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
         form = PostForm(request.POST, instance=the_post)
         if form.is_valid():
             form.save()
+            messages.success(request, "Post updated successfully!")
             return redirect("post", pk=the_post.pk)
     else:
         form = PostForm(instance=the_post)
 
-    context = {"post_form": form, "post": the_post}
+    context = {"post_form": form, "post": the_post, "title": "Edit Post"}
     return render(request, "post_form.html", context)
 
 
@@ -91,6 +99,7 @@ def student_detail(request, pk):
     return render(request, "student_detail.html", context)
 
 
+@login_required
 def student_create(request):
     if request.method == "POST":
         form = StudentForm(request.POST)
@@ -105,6 +114,7 @@ def student_create(request):
     return render(request, "student_form.html", context)
 
 
+@login_required
 def student_update(request, pk):
     student = get_object_or_404(Student, pk=pk)
     if request.method == "POST":
@@ -120,6 +130,7 @@ def student_update(request, pk):
     return render(request, "student_form.html", context)
 
 
+@login_required
 def student_delete(request, pk):
     student = get_object_or_404(Student, pk=pk)
     if request.method == "POST":
@@ -170,15 +181,41 @@ def create_user(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "User Added Successfully!")
+            user = form.save()
+            messages.success(request, f"Account created successfully! Please log in with your credentials.")
+            return redirect("login")
     else:
         form = UserCreationForm()
 
     context = {"form": form}
-    return render(request, "create_user.html", context)
+    return render(request, "signup.html", context)
 
 
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect("home")
+    
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            from django.contrib.auth import login
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, f"Welcome back, {user.username}!")
+            return redirect("home")
+        else:
+            messages.error(request, "Invalid username or password!")
+    else:
+        form = AuthenticationForm()
+    
+    context = {"form": form}
+    return render(request, "login.html", context)
 
 
+class CustomLogoutView(LogoutView):
+    template_name = 'logout.html'
+    
+    def get_redirect_url(self):
+        messages.success(self.request, "You have been logged out successfully!")
+        return super().get_redirect_url()
 

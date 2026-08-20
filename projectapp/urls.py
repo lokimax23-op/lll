@@ -1,7 +1,11 @@
 from projectapp import views
 from django.urls import path
+from django.contrib.auth.views import LogoutView
+
 urlpatterns = [ 
     path("", views.home, name="home" ),
+    path("login/", views.login_view, name="login"),
+    path("logout/", views.CustomLogoutView.as_view(), name="logout"),
     path("profile", views.profile, name = "profile"),
     path("about", views.about, name="about" ),
     path("posts", views.posts, name="posts" ),
