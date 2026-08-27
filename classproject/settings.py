@@ -30,7 +30,7 @@ DEBUG = True
 ALLOWED_HOSTS = (
     os.getenv('ALLOWED_HOSTS')
     or os.getenv('RENDER_EXTERNAL_HOSTNAME')
-    or 'localhost,127.0.0.1,testserver'
+    or 'localhost,127.0.0.1,testserver,max-z1fk.onrender.com'
 ).split(',')
 
 
