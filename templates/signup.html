@@ -13,6 +13,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
             background: linear-gradient(
                 135deg,
                 #080808,
@@ -23,7 +24,7 @@
         }
 
         .signup-container {
-            width: 380px;
+            width: min(100%, 380px);
             padding: 35px;
             background: linear-gradient(
                 145deg,
@@ -184,6 +185,21 @@
 
         .errorlist li {
             margin: 3px 0;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+
+            .signup-container {
+                padding: 24px 18px;
+                border-radius: 14px;
+            }
+
+            .signup-container h2 {
+                font-size: 22px;
+            }
         }
     </style>
 </head>

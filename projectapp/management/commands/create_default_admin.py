@@ -19,4 +19,6 @@ class Command(BaseCommand):
                 email=self.admin_email,
                 password=self.admin_password
             )
-            self.style.SUCCESS(f"Admin user '{self.admin_username}' created successfully.")
+            self.stdout.write(
+            self.style.SUCCESS(f"Admin user '{self.admin_username}' created successfully."    
+            ))

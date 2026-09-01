@@ -13,7 +13,6 @@
         body {
             background-color: #f0f2f5;
             font-family: 'Georgia', serif;
-            
             justify-content: center;
             align-items: center;
             min-height: 100vh;
@@ -106,9 +105,14 @@
         }
         /* Responsive handling for smaller viewport displays */
         @media (max-width: 600px) {
+            body {
+                padding: 16px;
+            }
+
             .postcard {
                 flex-direction: column;
                 height: auto;
+                padding: 20px 18px;
             }
             .message-side, .address-side {
                 width: 100%;
@@ -124,6 +128,13 @@
                 position: relative;
                 margin-bottom: 20px;
                 float: right;
+            }
+            .address-lines {
+                margin-bottom: 12px;
+            }
+            .line {
+                height: 32px;
+                font-size: 0.95rem;
             }
         }
     </style>

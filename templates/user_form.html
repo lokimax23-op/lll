@@ -14,6 +14,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
 
     background: linear-gradient(
         135deg,
@@ -26,7 +27,7 @@ body {
 }
 
 .table {
-    width: 380px;
+    width: min(100%, 380px);
     padding: 35px;
 
     background: linear-gradient(
@@ -130,6 +131,17 @@ body {
 }
 
 
+
+    @media (max-width: 480px) {
+        body {
+            padding: 16px;
+        }
+
+        .table {
+            padding: 24px 18px;
+            border-radius: 14px;
+        }
+    }
     </style>
 </head>
 <body>

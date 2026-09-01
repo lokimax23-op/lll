@@ -437,10 +437,12 @@ textarea {
 
 @media (max-width: 720px) {
     body { padding: 18px 12px; }
+    .page-shell { width: 100%; }
     .page-header { flex-direction: column; padding: 26px 22px 22px; }
     .header-actions { width: 100%; }
     .header-actions .btn { flex: 1; }
     .table-wrap { padding: 20px 14px 24px; }
+    .data-table { min-width: 0; }
     .alert { margin-right: 22px; margin-left: 22px; }
     .form-card { grid-template-columns: 1fr; }
     .brand-panel { border-right: 0; border-bottom: 1px solid #7f1d1d; }
@@ -450,4 +452,5 @@ textarea {
     .delete-form { padding: 0 22px 22px; }
     .delete-form .form-actions { padding: 20px 0 0; }
     .profile-row { grid-template-columns: 1fr; gap: 7px; }
+    .btn, .btn-small { width: 100%; }
 }

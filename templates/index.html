@@ -160,6 +160,43 @@
             box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
             transform: translateY(-2px);
         }
+
+        @media (max-width: 768px) {
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+                padding: 14px 16px;
+            }
+
+            .nav-links {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .user-info {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .container {
+                margin: 30px auto;
+                padding: 0 16px;
+            }
+
+            .buttons-group {
+                flex-direction: column;
+            }
+
+            .buttons-group .btn,
+            .buttons-group button {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
