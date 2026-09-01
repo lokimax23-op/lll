@@ -14,11 +14,12 @@ class Command(BaseCommand):
            self.style.ERROR(f"Admin user '{self.admin_username}' already exists.")
            
         else:
-            User.objects.create_superuser(
+           admin_user = User.objects.create_superuser(
                 username=self.admin_username,
                 email=self.admin_email,
                 password=self.admin_password
             )
-            self.stdout.write(
+           
+        self.stdout.write(
             self.style.SUCCESS(f"Admin user '{self.admin_username}' created successfully."    
             ))
