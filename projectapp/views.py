@@ -217,5 +217,6 @@ class CustomLogoutView(LogoutView):
     
     def get_redirect_url(self):
         messages.success(self.request, "You have been logged out successfully!")
-        return super().get_redirect_url()
+        url = super().get_redirect_url()
+        return url or '/'
 
