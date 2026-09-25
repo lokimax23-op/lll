@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Developer - Confirmation</title>
+    <link rel="stylesheet" href="{% static 'css/developer-theme.css' %}">
+</head>
+<body>
+    <div class="page-shell">
+        <div class="card delete-card">
+            <header class="page-header">
+                <p class="eyebrow">Confirm Action</p>
+                <h1>Remove Developer</h1>
+            </header>
+            <div class="delete-content">
+                <p class="delete-message">Are you sure you want to remove <strong>{{ student.first_name }} {{ student.last_name }}</strong> from the studio roster? This action cannot be undone.</p>
+            </div>
+            <form method="post" class="delete-form">
+                <div class="form-actions">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, Remove from Team</button>
+                    <a href="{% url 'student_detail' student.pk %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

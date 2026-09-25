@@ -1,20 +1,28 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Page</title>
+    <title>About GameCaptain</title>
+    <link rel="stylesheet" href="{% static 'css/developer-theme.css' %}">
 </head>
 <body>
-    <h1>This is my About Page</h1>
-    <p>{{dml}}</p>
-    <h2>The Developer's name is {{prog_name}}</h2>
-    <h2>The G.O.A.T is {{GOAT}}</h2>
-    <h1>{{best_players}}</h1>
-
-    {% for player in best_players %}
-    <p style="padding: 10px 100px">{{player}} {% if player == "Messi"%}<span>GOAT</span>{% endif%}</p>
-    {% endfor%}
-    <a href="/">Home Page</a>
+    <div class="page-shell">
+        <div class="card detail-card">
+            <header class="page-header">
+                <div>
+                    <p class="eyebrow">Studio Profile</p>
+                    <h1>GameCaptain Studio</h1>
+                </div>
+                <a href="{% url 'home' %}" class="btn btn-secondary">Back Home</a>
+            </header>
+            <div class="student-profile">
+                <div class="profile-row"><span class="label">Mission</span><span>We build immersive worlds, thrilling action, and unforgettable player stories.</span></div>
+                <div class="profile-row"><span class="label">Focus</span><span>Gameplay programming, art direction, VFX, QA, and production pipeline management.</span></div>
+                <div class="profile-row"><span class="label">Current Goal</span><span>Recruit top-tier talent and organize a studio roster for our next flagship title.</span></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

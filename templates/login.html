@@ -4,48 +4,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="{% static 'css/output.css' %}" />
+    <title>PixelForge | Login</title>
+    <link rel="stylesheet" href="{% static 'css/developer-theme.css' %}" />
     <style>
+        :root {
+            --auth-bg: #08151d;
+            --auth-panel: rgba(12, 25, 35, 0.96);
+            --auth-panel-border: rgba(37, 208, 255, 0.35);
+            --auth-input: #122a3c;
+            --auth-text: #edf8ff;
+            --auth-muted: #a7bfd1;
+            --auth-accent: #25d0ff;
+            --auth-accent-strong: #0ea5e9;
+            --auth-secondary: #9f7aea;
+        }
+
         body {
-            margin: 0;
-            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            background: linear-gradient(
-                135deg,
-                #080808,
-                #170606,
-                #090909
-            );
-            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            padding: 24px 18px;
+            background: radial-gradient(circle at top, rgba(37, 208, 255, 0.14), transparent 35%), linear-gradient(135deg, #05141f, #0b1f2d, #040b10);
         }
 
         .login-container {
-            width: min(100%, 380px);
-            padding: 35px;
-            background: linear-gradient(
-                145deg,
-                #171717,
-                #0d0d0d
-            );
-            border: 1px solid #7f1d1d;
+            width: min(100%, 430px);
+            padding: 32px 28px 26px;
+            border: 1px solid var(--auth-panel-border);
             border-radius: 18px;
-            box-shadow:
-                0 0 25px rgba(220, 38, 38, 0.15),
-                0 20px 50px rgba(0, 0, 0, 0.6);
+            background: linear-gradient(145deg, rgba(16, 31, 45, 0.97), rgba(8, 21, 29, 0.96));
+            box-shadow: 0 0 30px rgba(14, 165, 233, 0.12), 0 22px 60px rgba(0, 0, 0, 0.55);
             box-sizing: border-box;
         }
 
         .login-container h2 {
+            margin: 0 0 26px;
             text-align: center;
-            color: #f5f5f5;
-            margin-top: 0;
-            margin-bottom: 30px;
-            font-size: 24px;
-            letter-spacing: 1px;
+            color: var(--auth-text);
+            font-size: clamp(24px, 4vw, 30px);
+            letter-spacing: 0.5px;
         }
 
         .login-container form {
@@ -54,123 +52,102 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .form-group label {
             display: block;
-            color: #d1d5db;
             margin-bottom: 8px;
+            color: var(--auth-muted);
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 700;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #4b5563;
-            background-color: #1f2937;
-            color: #f5f5f5;
-            border-radius: 8px;
+            padding: 13px 14px;
+            border: 1px solid rgba(37, 208, 255, 0.25);
+            border-radius: 10px;
+            background: var(--auth-input);
+            color: var(--auth-text);
             font-size: 14px;
             box-sizing: border-box;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #dc2626;
-            box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
-            background-color: #111827;
+            border-color: var(--auth-accent);
+            box-shadow: 0 0 0 3px rgba(37, 208, 255, 0.12);
+            background: rgba(18, 42, 60, 0.95);
         }
 
         .form-group input::placeholder {
-            color: #9ca3af;
+            color: rgba(167, 191, 209, 0.75);
         }
 
         .login-btn {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(
-                135deg,
-                #dc2626,
-                #991b1b
-            );
-            color: white;
+            margin-top: 6px;
+            padding: 12px 16px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--auth-accent), var(--auth-accent-strong));
+            color: #03141d;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 800;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 10px 25px rgba(37, 208, 255, 0.2);
         }
 
         .login-btn:hover {
-            background: linear-gradient(
-                135deg,
-                #ef4444,
-                #dc2626
-            );
-            box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
             transform: translateY(-2px);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
+            box-shadow: 0 14px 28px rgba(37, 208, 255, 0.25);
         }
 
         .forgot-password {
+            margin-top: 18px;
             text-align: center;
-            margin-top: 15px;
         }
 
-        .forgot-password a {
-            color: #9ca3af;
+        .forgot-password a,
+        .signup-link a {
+            color: var(--auth-accent);
             text-decoration: none;
-            font-size: 13px;
-            transition: color 0.3s ease;
+            font-weight: 600;
+            transition: color 0.2s ease;
         }
 
-        .forgot-password a:hover {
-            color: #dc2626;
+        .forgot-password a:hover,
+        .signup-link a:hover {
+            color: #7ce3ff;
         }
 
         .signup-link {
+            margin-top: 18px;
             text-align: center;
-            margin-top: 20px;
-            color: #9ca3af;
-            font-size: 13px;
-        }
-
-        .signup-link a {
-            color: #dc2626;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .signup-link a:hover {
-            color: #ef4444;
+            color: var(--auth-muted);
+            font-size: 14px;
         }
 
         .error-message {
-            background-color: rgba(220, 38, 38, 0.1);
-            border: 1px solid #dc2626;
-            color: #fca5a5;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            border: 1px solid rgba(37, 208, 255, 0.25);
+            border-radius: 10px;
+            background: rgba(37, 208, 255, 0.08);
+            color: #d8f6ff;
             font-size: 13px;
         }
 
         .success-message {
-            background-color: rgba(34, 197, 94, 0.1);
-            border: 1px solid #22c55e;
-            color: #86efac;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            border: 1px solid rgba(52, 211, 153, 0.45);
+            border-radius: 10px;
+            background: rgba(52, 211, 153, 0.08);
+            color: #bafbe0;
             font-size: 13px;
         }
 
@@ -182,10 +159,6 @@
             .login-container {
                 padding: 24px 18px;
                 border-radius: 14px;
-            }
-
-            .login-container h2 {
-                font-size: 22px;
             }
         }
     </style>
@@ -204,6 +177,9 @@
 
         <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
+            {% if next_url %}
+                <input type="hidden" name="next" value="{{ next_url }}">
+            {% endif %}
 
             {% if form.non_field_errors %}
                 <div class="error-message">
@@ -247,9 +223,6 @@
             <a href="#">Forgot Password?</a>
         </div>
 
-        <div class="signup-link">
-            Don't have an account? <a href="{% url 'create_user' %}">Sign Up</a>
-        </div>
     </div>
 </body>
 </html>

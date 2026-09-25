@@ -17,6 +17,7 @@ urlpatterns = [
     path("students/<int:pk>/", views.student_detail, name="student_detail"),
     path("students/<int:pk>/edit/", views.student_update, name="student_edit"),
     path("students/<int:pk>/delete/", views.student_delete, name="student_delete"),
+    path("developer/game-code/", views.game_code, name="game_code"),
     path("user/form/", views.display_form, name = "user_form"),
     path("submit/form/", views.submit_form, name = "submit_form"),
     path("user/loki_user/", views.loki_user, name = "loki_user"),

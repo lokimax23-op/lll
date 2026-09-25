@@ -3,25 +3,28 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db import transaction
 from django.contrib import messages
 from django.views import View
-from projectapp.models import Post, Student
-from projectapp.forms import PostForm, StudentForm
+from django.utils.http import url_has_allowed_host_and_scheme
+from projectapp.models import GameCodeSubmission, Post, Student
+from projectapp.forms import DeveloperRegistrationForm, GameCodeSubmissionForm, PostForm, StudentForm
 
 # Create your views here.
 
 def home(request):
-    context = {'user': request.user}
+    context = {'user': request.user, 'studio_name': 'GameCaptain'}
     return render(request, "index.html", context)
 
 def about(request):
-    about_message = """
-    This is a message for the about page from the backend. 
-    """
-    best_players = [ "Neymar", "Mbappe", "Messi", "Dembele"]
-    GOAT = "Ronaldo"
-    context = {"dml": about_message, "prog_name": "DmlStack", "age": 43, "best_players": best_players, "GOAT": GOAT,}
+    studio_info = {
+        "name": "GameCaptain Studio",
+        "mission": "Build immersive worlds and unforgettable gameplay experiences.",
+        "focus": ["Gameplay Programming", "Art Direction", "VFX", "Production", "QA"],
+        "goal": "Recruit top developers for the next blockbuster release.",
+    }
+    context = {"studio": studio_info}
     return render(request, "about.html", context)
 
 def profile(request):
@@ -90,28 +93,40 @@ def edit_post(request, pk):
 def student_list(request):
     students = Student.objects.all().order_by("last_name", "first_name")
     context = {"students": students}
-    return render(request, "student_list.html", context)
+    return render(request, "developer_list.html", context)
 
 
 def student_detail(request, pk):
     student = get_object_or_404(Student, pk=pk)
     context = {"student": student}
-    return render(request, "student_detail.html", context)
+    return render(request, "developer_detail.html", context)
 
 
-@login_required
+def admin_only(user):
+    return user.is_authenticated and (user.is_staff or user.is_superuser)
+
+
+@user_passes_test(admin_only, login_url="login")
 def student_create(request):
     if request.method == "POST":
-        form = StudentForm(request.POST)
+        form = DeveloperRegistrationForm(request.POST)
         if form.is_valid():
-            student = form.save()
-            messages.success(request, "Student added successfully!")
+            with transaction.atomic():
+                developer_user = User.objects.create_user(
+                    username=form.cleaned_data["username"],
+                    email=form.cleaned_data["email"],
+                    password=form.cleaned_data["password"],
+                )
+                student = form.save(commit=False)
+                student.user = developer_user
+                student.save()
+            messages.success(request, "Developer added successfully!")
             return redirect("student_detail", pk=student.pk)
     else:
-        form = StudentForm()
+        form = DeveloperRegistrationForm()
 
-    context = {"form": form, "title": "Add Student"}
-    return render(request, "student_form.html", context)
+    context = {"form": form, "title": "Add Developer"}
+    return render(request, "developer_form.html", context)
 
 
 @login_required
@@ -121,13 +136,13 @@ def student_update(request, pk):
         form = StudentForm(request.POST, instance=student)
         if form.is_valid():
             form.save()
-            messages.success(request, "Student updated successfully!")
+            messages.success(request, "Developer updated successfully!")
             return redirect("student_detail", pk=student.pk)
     else:
         form = StudentForm(instance=student)
 
-    context = {"form": form, "title": "Edit Student", "student": student}
-    return render(request, "student_form.html", context)
+    context = {"form": form, "title": "Edit Developer", "student": student}
+    return render(request, "developer_form.html", context)
 
 
 @login_required
@@ -135,65 +150,51 @@ def student_delete(request, pk):
     student = get_object_or_404(Student, pk=pk)
     if request.method == "POST":
         student.delete()
-        messages.success(request, "Student deleted successfully!")
+        messages.success(request, "Developer deleted successfully!")
         return redirect("student_list")
 
     context = {"student": student}
-    return render(request, "student_confirm_delete.html", context)
+    return render(request, "developer_confirm_delete.html", context)
+
+
+def developer_only(user):
+    return user.is_authenticated and not user.is_staff
+
+
+@user_passes_test(developer_only, login_url="login")
+def game_code(request):
+    if request.method == "POST":
+        form = GameCodeSubmissionForm(request.POST)
+        if form.is_valid():
+            submission = form.save(commit=False)
+            submission.developer = request.user
+            submission.save()
+            messages.success(request, "Game code submitted successfully!")
+            return redirect("game_code")
+    else:
+        form = GameCodeSubmissionForm()
+
+    submissions = GameCodeSubmission.objects.filter(developer=request.user)
+    return render(request, "game_code.html", {"form": form, "submissions": submissions})
 
 
 def loki_user(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-        confirm_password = request.POST.get("confirm_password")
-        
-        if not (username and email and password and confirm_password):
-            messages.error(request, "All fields are required!")
-            return redirect("loki_user")
-        
-        if User.objects.filter(username__iexact=username).exists():
-            messages.error(request, "Username already exists!")
-            return redirect("loki_user")
-        
-        if User.objects.filter(email__iexact=email).exists():
-            messages.error(request, "Email already exists!")
-            return redirect("loki_user")
-        
-        if password != confirm_password:
-            messages.error(request, "Passwords do not match!")
-            return redirect("loki_user")        
-        
-        if len(password) < 8:
-            messages.error(request, "Password must be at least 8 characters long!")
-            return redirect("loki_user")
-        
-        # Create the user
-        User.objects.create_user(username=username, email=email, password=password)
-        messages.success(request, "User registered successfully!")
-        return redirect("loki_user")
-    
-    return render(request, "loki_user.html")
+    messages.info(request, "Account creation is disabled. Please log in.")
+    return redirect("login")
 
 
 def create_user(request):
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            messages.success(request, f"Account created successfully! Please log in with your credentials.")
-            return redirect("login")
-    else:
-        form = UserCreationForm()
-
-    context = {"form": form}
-    return render(request, "signup.html", context)
+    messages.info(request, "Account creation is disabled. Please log in.")
+    return redirect("login")
 
 
 def login_view(request):
+    next_url = request.POST.get("next") or request.GET.get("next")
+    if not url_has_allowed_host_and_scheme(next_url, {request.get_host()}, require_https=request.is_secure()):
+        next_url = None
+
     if request.user.is_authenticated:
-        return redirect("home")
+        return redirect(next_url or "home")
     
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
@@ -202,13 +203,13 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
             messages.success(request, f"Welcome back, {user.username}!")
-            return redirect("home")
+            return redirect(next_url or "home")
         else:
             messages.error(request, "Invalid username or password!")
     else:
         form = AuthenticationForm()
     
-    context = {"form": form}
+    context = {"form": form, "next_url": next_url}
     return render(request, "login.html", context)
 
 
