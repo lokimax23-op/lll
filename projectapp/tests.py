@@ -1,6 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.core.management import call_command
+from unittest.mock import patch
 
 from projectapp.models import GameCodeSubmission, Student
 
@@ -101,6 +103,20 @@ class GameDeveloperRegistrationTests(TestCase):
         )
 
         self.assertRedirects(response, reverse("student_add"))
+
+    def test_default_admin_command_uses_environment_credentials(self):
+        environment = {
+            "DJANGO_SUPERUSER_USERNAME": "render-admin",
+            "DJANGO_SUPERUSER_EMAIL": "admin@example.com",
+            "DJANGO_SUPERUSER_PASSWORD": "Secure-Render-Password-123!",
+        }
+        with patch.dict("os.environ", environment):
+            call_command("create_default_admin", verbosity=0)
+
+        admin = User.objects.get(username="render-admin")
+        self.assertTrue(admin.is_staff)
+        self.assertTrue(admin.is_superuser)
+        self.assertTrue(admin.check_password(environment["DJANGO_SUPERUSER_PASSWORD"]))
 
     def test_developer_publish_sign_in_returns_to_code_workspace(self):
         developer = User.objects.create_user(username="publisher", password="test-password-123")

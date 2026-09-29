@@ -14,6 +14,7 @@
             {% if user.is_authenticated %}
                 <span class="user-greeting">@{{ user.username }}</span>
                 {% if user.is_staff or user.is_superuser %}
+                    <a href="{% url 'admin:index' %}" class="btn btn-secondary btn-small">Admin</a>
                     <a href="{% url 'student_list' %}" class="btn btn-secondary btn-small">Manage developers</a>
                     <a href="{% url 'student_add' %}" class="btn btn-primary btn-small">Add developer</a>
                 {% else %}

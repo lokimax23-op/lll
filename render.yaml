@@ -12,3 +12,9 @@ services:
         generateValue: true
       - key: DEBUG
         value: "false"
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: my_admin
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: admin@example.com
+      - key: DJANGO_SUPERUSER_PASSWORD
+        generateValue: true

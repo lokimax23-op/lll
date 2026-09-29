@@ -7,6 +7,7 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
 python manage.py migrate --noinput
+python manage.py create_default_admin
 python manage.py check
 
 if grep -q "STATIC_ROOT" "classproject/settings.py"; then
