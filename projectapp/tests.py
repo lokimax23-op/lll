@@ -74,10 +74,32 @@ class GameDeveloperRegistrationTests(TestCase):
 
         self.assertRedirects(response, reverse("student_add"))
 
-    def test_account_creation_redirects_to_login(self):
+    def test_developer_can_sign_up_and_publish_code(self):
+        response = self.client.post(reverse("create_user"), {
+            "username": "newdev",
+            "password1": "Strong-Developer-Password-123!",
+            "password2": "Strong-Developer-Password-123!",
+        })
+
+        self.assertRedirects(response, reverse("game_code"))
+        developer = User.objects.get(username="newdev")
+        self.assertTrue(self.client.session.get("_auth_user_id"))
+
+        response = self.client.post(reverse("game_code"), {
+            "title": "New movement mechanic",
+            "language": "Python",
+            "description": "Published directly after signup.",
+            "code": "def move():\n    return True",
+        })
+
+        self.assertRedirects(response, reverse("game_code"))
+        self.assertEqual(GameCodeSubmission.objects.get().developer, developer)
+
+    def test_signup_page_loads(self):
         response = self.client.get(reverse("create_user"))
 
-        self.assertRedirects(response, reverse("login"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Create Account")
         self.assertEqual(User.objects.count(), 0)
 
     def test_legacy_account_creation_redirects_to_login(self):
@@ -115,3 +137,44 @@ class GameDeveloperRegistrationTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("login"), response["Location"])
+
+
+class GameCodeSharingTests(TestCase):
+    def setUp(self):
+        self.developer = User.objects.create_user(username="pixeldev", password="test-password-123")
+        self.submission = GameCodeSubmission.objects.create(
+            developer=self.developer,
+            title="Wall jump controller",
+            language="Python",
+            description="A reusable platformer movement mechanic.",
+            code="def wall_jump(player):\n    player.velocity_y = -12",
+        )
+
+    def test_public_feed_shows_submissions_to_anonymous_visitors(self):
+        response = self.client.get(reverse("code_feed"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Wall jump controller")
+        self.assertContains(response, "@pixeldev")
+
+    def test_public_feed_searches_titles_languages_and_developers(self):
+        response = self.client.get(reverse("code_feed"), {"q": "Python"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Wall jump controller")
+
+        response = self.client.get(reverse("code_feed"), {"q": "missing"})
+        self.assertNotContains(response, "Wall jump controller")
+
+    def test_public_detail_shows_full_code_and_share_link(self):
+        response = self.client.get(reverse("game_code_detail", args=[self.submission.pk]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "def wall_jump(player):")
+        self.assertContains(response, "pixeldev")
+        self.assertContains(response, reverse("game_code_detail", args=[self.submission.pk]))
+
+    def test_missing_public_detail_returns_404(self):
+        response = self.client.get(reverse("game_code_detail", args=[99999]))
+
+        self.assertEqual(response.status_code, 404)

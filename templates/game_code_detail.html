@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ submission.title }} | GameCaptain Code</title>
+    <link rel="stylesheet" href="{% static 'css/developer-theme.css' %}">
+</head>
+<body>
+    {% include "partials/site_nav.html" %}
+
+    <main class="page-shell detail-shell">
+        <header class="detail-heading">
+            <a class="back-link" href="{% url 'code_feed' %}">&larr; All snippets</a>
+            <div class="snippet-topline">
+                <span class="language-tag">{{ submission.language }}</span>
+                <time datetime="{{ submission.created_at|date:'c' }}">Published {{ submission.created_at|date:"M j, Y" }}</time>
+            </div>
+            <h1>{{ submission.title }}</h1>
+            <p class="detail-author">By <a href="{% url 'code_feed' %}?q={{ submission.developer.username|urlencode }}">@{{ submission.developer.username }}</a></p>
+            {% if submission.description %}<p class="detail-description">{{ submission.description }}</p>{% endif %}
+        </header>
+
+        <section class="code-panel" aria-label="Source code">
+            <div class="code-panel-toolbar">
+                <span>{{ submission.language }} source</span>
+                <button id="copy-code" class="btn btn-secondary btn-small" type="button">Copy code</button>
+            </div>
+            <pre><code id="source-code">{{ submission.code }}</code></pre>
+        </section>
+
+        <section class="share-panel" aria-label="Share this snippet">
+            <div>
+                <p class="eyebrow">Permanent link</p>
+                <p class="share-caption">Anyone with this link can view the code.</p>
+            </div>
+            <div class="share-control">
+                <input id="share-url" type="url" value="{{ request.build_absolute_uri }}" readonly aria-label="Share URL">
+                <button id="copy-link" class="btn btn-primary" type="button">Copy link</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const copyButton = (buttonId, valueId, successLabel) => {
+            const button = document.getElementById(buttonId);
+            button.addEventListener("click", async () => {
+                const value = document.getElementById(valueId).textContent || document.getElementById(valueId).value;
+                await navigator.clipboard.writeText(value);
+                button.textContent = successLabel;
+                window.setTimeout(() => { button.textContent = button.dataset.label; }, 1600);
+            });
+            button.dataset.label = button.textContent;
+        };
+        copyButton("copy-code", "source-code", "Copied");
+        copyButton("copy-link", "share-url", "Link copied");
+    </script>
+</body>
+</html>

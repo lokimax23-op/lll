@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import transaction
+from django.db.models import Q
 from django.contrib import messages
 from django.views import View
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -14,8 +16,30 @@ from projectapp.forms import DeveloperRegistrationForm, GameCodeSubmissionForm, 
 # Create your views here.
 
 def home(request):
-    context = {'user': request.user, 'studio_name': 'GameCaptain'}
+    query = request.GET.get("q", "").strip()
+    submissions = GameCodeSubmission.objects.select_related("developer")
+    if query:
+        submissions = submissions.filter(
+            Q(title__icontains=query)
+            | Q(description__icontains=query)
+            | Q(language__icontains=query)
+            | Q(developer__username__icontains=query)
+        )
+    context = {
+        "user": request.user,
+        "studio_name": "GameCaptain",
+        "submissions": submissions,
+        "query": query,
+        "submission_count": submissions.count(),
+    }
     return render(request, "index.html", context)
+
+
+def game_code_detail(request, pk):
+    submission = get_object_or_404(
+        GameCodeSubmission.objects.select_related("developer"), pk=pk
+    )
+    return render(request, "game_code_detail.html", {"submission": submission})
 
 def about(request):
     studio_info = {
@@ -184,8 +208,24 @@ def loki_user(request):
 
 
 def create_user(request):
-    messages.info(request, "Account creation is disabled. Please log in.")
-    return redirect("login")
+    next_url = request.POST.get("next") or request.GET.get("next")
+    if not url_has_allowed_host_and_scheme(next_url, {request.get_host()}, require_https=request.is_secure()):
+        next_url = None
+
+    if request.user.is_authenticated:
+        return redirect(next_url or "home")
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            developer = form.save()
+            auth_login(request, developer)
+            messages.success(request, "Your developer account is ready. Share your first snippet.")
+            return redirect(next_url or "game_code")
+    else:
+        form = UserCreationForm()
+
+    return render(request, "signup.html", {"form": form, "next_url": next_url})
 
 
 def login_view(request):

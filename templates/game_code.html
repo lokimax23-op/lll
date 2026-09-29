@@ -95,16 +95,17 @@
     </style>
 </head>
 <body>
+    {% include "partials/site_nav.html" %}
     <div class="page-shell code-lab">
         <div class="card">
             <header class="page-header">
                 <div>
                     <p class="eyebrow">Developer Workspace</p>
                     <h1>Drop Your Game Code</h1>
-                    <p class="hero-copy">Share a gameplay system, mechanic, tool, or prototype with the studio.</p>
+                    <p class="hero-copy">Publish a gameplay system, mechanic, tool, or prototype for developers to explore.</p>
                 </div>
                 <div class="header-actions">
-                    <a href="{% url 'home' %}" class="btn btn-secondary">Home</a>
+                    <a href="{% url 'code_feed' %}" class="btn btn-secondary">Explore code</a>
                     <a href="{% url 'student_list' %}" class="btn btn-secondary">Roster</a>
                 </div>
             </header>
@@ -143,12 +144,13 @@
                         <article class="submission">
                             <div class="submission-header">
                                 <div>
-                                    <h3>{{ submission.title }}</h3>
+                                    <h3><a class="snippet-title-link" href="{% url 'game_code_detail' submission.pk %}">{{ submission.title }}</a></h3>
                                     <p class="submission-meta">{{ submission.language }} · {{ submission.created_at|date:"M j, Y g:i A" }}</p>
                                 </div>
                             </div>
                             {% if submission.description %}<p class="submission-description">{{ submission.description }}</p>{% endif %}
                             <pre>{{ submission.code }}</pre>
+                            <p class="submission-share"><a href="{% url 'game_code_detail' submission.pk %}">Open public snippet and share link &rarr;</a></p>
                         </article>
                     {% endfor %}
                 </div>

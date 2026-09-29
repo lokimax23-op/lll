@@ -4,48 +4,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameCaptain | Game Dev Registry</title>
+    <title>GameCaptain | Game Code</title>
     <link rel="stylesheet" href="{% static 'css/developer-theme.css' %}">
 </head>
 <body>
-    <nav class="topbar">
-        <div class="nav-brand">GAMECAPTAIN</div>
-        <ul class="nav-links">
-            <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'about' %}">Studio</a></li>
-            <li><a href="{% url 'student_list' %}">Developers</a></li>
-            {% if user.is_authenticated and not user.is_staff %}
-                <li><a href="{% url 'game_code' %}">My Game Code</a></li>
-            {% endif %}
-        </ul>
-        <div class="user-info">
+    {% include "partials/site_nav.html" %}
+
+    <main class="page-shell code-home">
+        <section class="feed-heading">
+            <div>
+                <p class="eyebrow">Game code, shared openly</p>
+                <h1>Build in public.<br><span>Ship better games.</span></h1>
+                <p class="hero-copy">Explore mechanics, tools, and experiments from game developers.</p>
+            </div>
             {% if user.is_authenticated %}
-                <span class="user-greeting">Operator: <strong>{{ user.username }}</strong></span>
-                <form method="POST" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit" class="logout-btn">Logout</button>
-                </form>
+                <a href="{% url 'game_code' %}" class="btn btn-primary">+ Publish code</a>
             {% else %}
-                <div class="auth-buttons">
-                    <a href="{% url 'login' %}" class="login-btn">Login</a>
+                <a href="{% url 'login' %}?next={% url 'game_code' %}" class="btn btn-primary">Share your code</a>
+            {% endif %}
+        </section>
+
+        <section class="feed-section" aria-labelledby="feed-title">
+            <div class="feed-toolbar">
+                <div>
+                    <p class="eyebrow">Community repository</p>
+                    <h2 id="feed-title">Latest snippets <span class="result-count">{{ submission_count }}</span></h2>
+                </div>
+                <form class="feed-search" method="get" action="{% url 'code_feed' %}">
+                    <label class="visually-hidden" for="code-search">Search code</label>
+                    <input id="code-search" name="q" type="search" value="{{ query }}" placeholder="Search title, language, developer...">
+                    <button class="btn btn-secondary" type="submit">Search</button>
+                </form>
+            </div>
+
+            {% if submissions %}
+                <div class="snippet-grid">
+                    {% for submission in submissions %}
+                        <article class="snippet-card">
+                            <div class="snippet-topline">
+                                <span class="language-tag">{{ submission.language }}</span>
+                                <time datetime="{{ submission.created_at|date:'c' }}">{{ submission.created_at|date:"M j, Y" }}</time>
+                            </div>
+                            <h3><a href="{% url 'game_code_detail' submission.pk %}">{{ submission.title }}</a></h3>
+                            <p class="snippet-description">{{ submission.description|default:"No description provided."|truncatechars:150 }}</p>
+                            <pre><code>{{ submission.code|truncatechars:220 }}</code></pre>
+                            <div class="snippet-footer">
+                                <a href="{% url 'code_feed' %}?q={{ submission.developer.username|urlencode }}" class="developer-link">@{{ submission.developer.username }}</a>
+                                <a class="text-link" href="{% url 'game_code_detail' submission.pk %}">View snippet &rarr;</a>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state feed-empty">
+                    <h3>{% if query %}No snippets match “{{ query }}”{% else %}The repository is ready for its first commit{% endif %}</h3>
+                    <p>{% if query %}Try a different title, language, or developer.{% else %}Publish a mechanic, tool, or prototype and share it with the community.{% endif %}</p>
+                    {% if not query %}<a href="{% url 'game_code' %}" class="btn btn-primary">Publish the first snippet</a>{% endif %}
                 </div>
             {% endif %}
-        </div>
-    </nav>
-
-    <main class="hero-shell">
-        <section class="hero-card">
-            <p class="eyebrow">Game Studio Registration</p>
-            <h1>Build the next blockbuster team.</h1>
-            <p class="hero-copy">Register your developers, assign specialties, and organize the creative roster behind your next game release.</p>
-            <div class="buttons-group">
-                <a href="{% url 'student_list' %}" class="btn btn-primary">View Developers</a>
-                {% if user.is_authenticated and user.is_staff or user.is_authenticated and user.is_superuser %}
-                    <a href="{% url 'student_add' %}" class="btn btn-secondary">Register New Dev</a>
-                {% elif not user.is_authenticated %}
-                    <a href="{% url 'login' %}?next={% url 'student_add' %}" class="btn btn-secondary">Admin Login to Register</a>
-                {% endif %}
-            </div>
         </section>
     </main>
 </body>
