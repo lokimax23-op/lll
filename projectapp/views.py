@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -223,7 +224,10 @@ def login_view(request):
         next_url = None
 
     if request.user.is_authenticated:
-        return redirect(next_url or "home")
+        user_is_admin = admin_only(request.user)
+        if user_is_admin and next_url == reverse("game_code"):
+            next_url = None
+        return redirect(next_url or ("admin:index" if user_is_admin else "home"))
     
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
@@ -232,7 +236,10 @@ def login_view(request):
             user = form.get_user()
             login(request, user)
             messages.success(request, f"Welcome back, {user.username}!")
-            return redirect(next_url or "home")
+            user_is_admin = admin_only(user)
+            if user_is_admin and next_url == reverse("game_code"):
+                next_url = None
+            return redirect(next_url or ("admin:index" if user_is_admin else "home"))
         else:
             messages.error(request, "Invalid username or password!")
     else:

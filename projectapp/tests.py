@@ -104,6 +104,44 @@ class GameDeveloperRegistrationTests(TestCase):
 
         self.assertRedirects(response, reverse("student_add"))
 
+    def test_admin_login_without_next_opens_admin_dashboard(self):
+        User.objects.create_user(
+            username="admin-dashboard",
+            password="test-password-123",
+            is_staff=True,
+            is_superuser=True,
+        )
+
+        response = self.client.post(reverse("login"), {
+            "username": "admin-dashboard",
+            "password": "test-password-123",
+        })
+
+        self.assertRedirects(response, reverse("admin:index"))
+        dashboard = self.client.get(reverse("admin:index"))
+        self.assertEqual(dashboard.status_code, 200)
+        self.assertContains(dashboard, "Students")
+        self.assertContains(dashboard, "Game code submissions")
+
+    def test_admin_login_from_publish_link_opens_admin_dashboard(self):
+        User.objects.create_user(
+            username="admin-publish-link",
+            password="test-password-123",
+            is_staff=True,
+            is_superuser=True,
+        )
+
+        response = self.client.post(
+            f"{reverse('login')}?next={reverse('game_code')}",
+            {
+                "username": "admin-publish-link",
+                "password": "test-password-123",
+                "next": reverse("game_code"),
+            },
+        )
+
+        self.assertRedirects(response, reverse("admin:index"))
+
     def test_default_admin_command_uses_environment_credentials(self):
         environment = {
             "DJANGO_SUPERUSER_USERNAME": "render-admin",
