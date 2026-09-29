@@ -45,13 +45,12 @@ class DeveloperRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = Student
-        fields = ["first_name", "last_name", "email", "age", "department"]
+        fields = ["first_name", "last_name", "email", "age"]
         widgets = {
             "first_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "First name"}),
             "last_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Last name"}),
             "email": forms.EmailInput(attrs={"class": "form-control", "placeholder": "Email address"}),
             "age": forms.NumberInput(attrs={"class": "form-control", "placeholder": "Age"}),
-            "department": forms.TextInput(attrs={"class": "form-control", "placeholder": "Specialty / genre / engine"}),
         }
 
     def clean_username(self):

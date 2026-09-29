@@ -33,6 +33,31 @@ class GameDeveloperRegistrationTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse("login"), response["Location"])
 
+    def test_non_admin_cannot_edit_or_delete_developer(self):
+        admin = User.objects.create_user(
+            username="admin",
+            password="test-password-123",
+            is_staff=True,
+            is_superuser=True,
+        )
+        student = Student.objects.create(
+            first_name="Ava",
+            last_name="Storm",
+            email="ava@example.com",
+            age=28,
+            department="Gameplay Programming",
+        )
+        developer = User.objects.create_user(username="developer", password="test-password-123")
+        self.client.force_login(developer)
+
+        edit_response = self.client.get(reverse("student_edit", args=[student.pk]))
+        delete_response = self.client.get(reverse("student_delete", args=[student.pk]))
+
+        self.assertEqual(edit_response.status_code, 302)
+        self.assertIn(reverse("login"), edit_response["Location"])
+        self.assertEqual(delete_response.status_code, 302)
+        self.assertIn(reverse("login"), delete_response["Location"])
+
     def test_admin_can_register_developer(self):
         admin = User.objects.create_user(
             username="admin",
@@ -55,6 +80,9 @@ class GameDeveloperRegistrationTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Student.objects.count(), 1)
+        developer_profile = Student.objects.get(email="ava@example.com")
+        self.assertEqual(developer_profile.department, "Not specified")
+        self.assertNotContains(self.client.get(reverse("student_add")), "Specialty / genre / engine")
         self.assertTrue(User.objects.filter(username="ava-storm").exists())
         self.client.logout()
         self.assertTrue(self.client.login(username="ava-storm", password="Strong-Developer-Password-123!"))
@@ -74,33 +102,51 @@ class GameDeveloperRegistrationTests(TestCase):
 
         self.assertRedirects(response, reverse("student_add"))
 
-    def test_developer_can_sign_up_and_publish_code(self):
+    def test_developer_publish_sign_in_returns_to_code_workspace(self):
+        developer = User.objects.create_user(username="publisher", password="test-password-123")
+        Student.objects.create(
+            user=developer,
+            first_name="Game",
+            last_name="Developer",
+            email="publisher@example.com",
+            age=28,
+            department="Not specified",
+        )
+
+        login_url = f"{reverse('login')}?next={reverse('game_code')}"
+        response = self.client.post(login_url, {
+            "username": "publisher",
+            "password": "test-password-123",
+            "next": reverse("game_code"),
+        })
+
+        self.assertRedirects(response, reverse("game_code"))
+
+    def test_public_signup_is_disabled(self):
         response = self.client.post(reverse("create_user"), {
             "username": "newdev",
             "password1": "Strong-Developer-Password-123!",
             "password2": "Strong-Developer-Password-123!",
         })
 
-        self.assertRedirects(response, reverse("game_code"))
-        developer = User.objects.get(username="newdev")
-        self.assertTrue(self.client.session.get("_auth_user_id"))
+        self.assertRedirects(response, reverse("login"))
+        self.assertFalse(User.objects.filter(username="newdev").exists())
 
-        response = self.client.post(reverse("game_code"), {
-            "title": "New movement mechanic",
-            "language": "Python",
-            "description": "Published directly after signup.",
-            "code": "def move():\n    return True",
-        })
+    def test_homepage_routes_guests_and_staff_to_their_own_workflows(self):
+        response = self.client.get(reverse("home"))
+        self.assertContains(response, "Sign in to publish")
+        self.assertNotContains(response, "Create developer account")
 
-        self.assertRedirects(response, reverse("game_code"))
-        self.assertEqual(GameCodeSubmission.objects.get().developer, developer)
+        staff_user = User.objects.create_user(
+            username="moderator",
+            password="test-password-123",
+            is_staff=True,
+        )
+        self.client.force_login(staff_user)
+        response = self.client.get(reverse("home"))
 
-    def test_signup_page_loads(self):
-        response = self.client.get(reverse("create_user"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Create Account")
-        self.assertEqual(User.objects.count(), 0)
+        self.assertContains(response, "Open admin")
+        self.assertNotContains(response, "+ Publish code")
 
     def test_legacy_account_creation_redirects_to_login(self):
         response = self.client.post(reverse("loki_user"), {
@@ -115,6 +161,14 @@ class GameDeveloperRegistrationTests(TestCase):
 
     def test_non_admin_can_submit_game_code(self):
         developer = User.objects.create_user(username="developer", password="test-password-123")
+        Student.objects.create(
+            user=developer,
+            first_name="Game",
+            last_name="Developer",
+            email="developer@example.com",
+            age=28,
+            department="Gameplay Programming",
+        )
         self.client.force_login(developer)
 
         response = self.client.post(reverse("game_code"), {
@@ -128,6 +182,15 @@ class GameDeveloperRegistrationTests(TestCase):
         submission = GameCodeSubmission.objects.get()
         self.assertEqual(submission.developer, developer)
         self.assertEqual(submission.title, "Player Dash")
+
+    def test_non_admin_without_developer_profile_can_open_code_workspace(self):
+        user = User.objects.create_user(username="unregistered", password="test-password-123")
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("game_code"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Drop Your Game Code")
 
     def test_admin_cannot_open_game_code_workspace(self):
         admin = User.objects.create_user(username="admin", password="test-password-123", is_staff=True)

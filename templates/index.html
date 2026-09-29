@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GameCaptain | Game Code</title>
-    <link rel="stylesheet" href="{% static 'css/developer-theme.css' %}">
+    <link rel="stylesheet" href="{% static 'css/developer-theme.css' %}?v=black-purple-blue">
 </head>
 <body>
     {% include "partials/site_nav.html" %}
@@ -17,10 +17,13 @@
                 <h1>Build in public.<br><span>Ship better games.</span></h1>
                 <p class="hero-copy">Explore mechanics, tools, and experiments from game developers.</p>
             </div>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and not user.is_staff and not user.is_superuser %}
                 <a href="{% url 'game_code' %}" class="btn btn-primary">+ Publish code</a>
+            {% elif user.is_staff or user.is_superuser %}
+                <a href="{% url 'student_add' %}" class="btn btn-primary">Add developer</a>
+                <a href="{% url 'admin:index' %}" class="btn btn-secondary">Open admin</a>
             {% else %}
-                <a href="{% url 'login' %}?next={% url 'game_code' %}" class="btn btn-primary">Share your code</a>
+                <a href="{% url 'login' %}?next={% url 'game_code' %}" class="btn btn-primary">Sign in to publish</a>
             {% endif %}
         </section>
 
@@ -59,7 +62,13 @@
                 <div class="empty-state feed-empty">
                     <h3>{% if query %}No snippets match “{{ query }}”{% else %}The repository is ready for its first commit{% endif %}</h3>
                     <p>{% if query %}Try a different title, language, or developer.{% else %}Publish a mechanic, tool, or prototype and share it with the community.{% endif %}</p>
-                    {% if not query %}<a href="{% url 'game_code' %}" class="btn btn-primary">Publish the first snippet</a>{% endif %}
+                    {% if not query %}
+                        {% if user.is_authenticated and not user.is_staff and not user.is_superuser %}
+                            <a href="{% url 'game_code' %}" class="btn btn-primary">Publish the first snippet</a>
+                        {% elif not user.is_authenticated %}
+                            <a href="{% url 'login' %}?next={% url 'game_code' %}" class="btn btn-primary">Sign in to publish</a>
+                        {% endif %}
+                    {% endif %}
                 </div>
             {% endif %}
         </section>

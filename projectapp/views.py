@@ -143,6 +143,7 @@ def student_create(request):
                 )
                 student = form.save(commit=False)
                 student.user = developer_user
+                student.department = "Not specified"
                 student.save()
             messages.success(request, "Developer added successfully!")
             return redirect("student_detail", pk=student.pk)
@@ -153,7 +154,7 @@ def student_create(request):
     return render(request, "developer_form.html", context)
 
 
-@login_required
+@user_passes_test(admin_only, login_url="login")
 def student_update(request, pk):
     student = get_object_or_404(Student, pk=pk)
     if request.method == "POST":
@@ -169,7 +170,7 @@ def student_update(request, pk):
     return render(request, "developer_form.html", context)
 
 
-@login_required
+@user_passes_test(admin_only, login_url="login")
 def student_delete(request, pk):
     student = get_object_or_404(Student, pk=pk)
     if request.method == "POST":
@@ -182,7 +183,11 @@ def student_delete(request, pk):
 
 
 def developer_only(user):
-    return user.is_authenticated and not user.is_staff
+    return (
+        user.is_authenticated
+        and not user.is_staff
+        and not user.is_superuser
+    )
 
 
 @user_passes_test(developer_only, login_url="login")
@@ -208,24 +213,8 @@ def loki_user(request):
 
 
 def create_user(request):
-    next_url = request.POST.get("next") or request.GET.get("next")
-    if not url_has_allowed_host_and_scheme(next_url, {request.get_host()}, require_https=request.is_secure()):
-        next_url = None
-
-    if request.user.is_authenticated:
-        return redirect(next_url or "home")
-
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            developer = form.save()
-            auth_login(request, developer)
-            messages.success(request, "Your developer account is ready. Share your first snippet.")
-            return redirect(next_url or "game_code")
-    else:
-        form = UserCreationForm()
-
-    return render(request, "signup.html", {"form": form, "next_url": next_url})
+    messages.info(request, "Developer accounts are created by an administrator. Please log in.")
+    return redirect("login")
 
 
 def login_view(request):

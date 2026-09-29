@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Developers</title>
-    <link rel="stylesheet" href="{% static 'css/developer-theme.css' %}">
+    <link rel="stylesheet" href="{% static 'css/developer-theme.css' %}?v=black-purple-blue">
 </head>
 <body>
     {% include "partials/site_nav.html" %}
@@ -47,7 +47,7 @@
                     </table>
                 </div>
             {% else %}
-                <div class="empty-state"><h3>No developers yet</h3><p>Be the first to share a game mechanic with the community.</p><a href="{% url 'create_user' %}" class="btn btn-primary">Join the community</a></div>
+                <div class="empty-state"><h3>No developers yet</h3><p>Developers are added by the studio administrator.</p>{% if user.is_authenticated and user.is_staff or user.is_authenticated and user.is_superuser %}<a href="{% url 'student_add' %}" class="btn btn-primary">Add developer</a>{% else %}<a href="{% url 'login' %}" class="btn btn-secondary">Admin sign in</a>{% endif %}</div>
             {% endif %}
         </div>
     </div>
