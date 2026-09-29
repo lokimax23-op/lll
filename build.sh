@@ -10,5 +10,5 @@ python manage.py migrate --noinput
 python manage.py check
 
 if grep -q "STATIC_ROOT" "classproject/settings.py"; then
-  python manage.py collectstatic --noinput
+  python manage.py collectstatic --clear --noinput
 fi
