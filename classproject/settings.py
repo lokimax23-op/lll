@@ -29,23 +29,32 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config(
+
+base_allowed_hosts = config(
     'ALLOWED_HOSTS',
     default='localhost,127.0.0.1,testserver',
     cast=Csv(),
 )
+ALLOWED_HOSTS = list(dict.fromkeys(base_allowed_hosts + ['localhost', '127.0.0.1', 'testserver']))
 
-render_hostname = os.getenv('RENDER_EXTERNAL_HOSTNAME')
-if render_hostname and render_hostname not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append(render_hostname)
+render_hostname = os.getenv('RENDER_EXTERNAL_HOSTNAME') or os.getenv('RENDER_HOSTNAME')
+if render_hostname:
+    render_hostname = render_hostname.strip()
+    if render_hostname not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(render_hostname)
+    if render_hostname.endswith('.onrender.com'):
+        ALLOWED_HOSTS.extend(['*.onrender.com', 'onrender.com'])
 
-CSRF_TRUSTED_ORIGINS = config(
+base_csrf_origins = config(
     'CSRF_TRUSTED_ORIGINS',
     default='http://localhost:8000,http://127.0.0.1:8000',
     cast=Csv(),
 )
+CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(base_csrf_origins + ['http://localhost:8000', 'http://127.0.0.1:8000']))
 if render_hostname:
     CSRF_TRUSTED_ORIGINS.append(f'https://{render_hostname}')
+    if render_hostname.endswith('.onrender.com'):
+        CSRF_TRUSTED_ORIGINS.append(f'https://*.{render_hostname.split(".", 1)[1]}')
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = not DEBUG
