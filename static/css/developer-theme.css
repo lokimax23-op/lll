@@ -1513,3 +1513,266 @@ select:focus {
 :focus-visible {
     outline-color: var(--secondary);
 }
+
+@media (max-width: 1024px) {
+    .topbar {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 18px;
+    }
+
+    .nav-brand {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+
+    .nav-links,
+    .user-info {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .form-card {
+        grid-template-columns: minmax(210px, 0.75fr) minmax(0, 1.25fr);
+    }
+
+    .brand-panel,
+    .form-panel {
+        min-width: 0;
+    }
+
+    .feed-heading h1 {
+        font-size: 36px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 16px 12px;
+    }
+
+    .topbar {
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 12px;
+    }
+
+    .nav-links {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .user-info {
+        display: grid;
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .user-greeting {
+        grid-column: 1 / -1;
+        overflow-wrap: anywhere;
+        text-align: center;
+    }
+
+    .user-info form {
+        display: contents;
+    }
+
+    .user-info .btn,
+    .user-info .logout-btn {
+        width: 100%;
+        min-width: 0;
+        white-space: normal;
+    }
+
+    .page-header {
+        align-items: stretch;
+        gap: 14px;
+        padding: 24px 22px 20px;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .form-card {
+        grid-template-columns: 1fr;
+    }
+
+    .brand-panel {
+        padding: 28px 24px;
+        border-right: 0;
+        border-bottom: 1px solid #352b4b;
+    }
+
+    .form-panel,
+    .student-profile,
+    .empty-state {
+        padding: 24px 22px;
+    }
+
+    .feed-heading {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px 0 4px;
+    }
+
+    .feed-heading h1 {
+        font-size: 32px;
+    }
+
+    .feed-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .feed-search {
+        width: 100%;
+    }
+
+    .snippet-grid,
+    .share-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .share-panel {
+        padding: 18px;
+    }
+
+    .share-control {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .snippet-footer {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .table-wrap {
+        padding: 18px 14px 22px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .data-table {
+        min-width: 600px;
+    }
+
+    .code-panel-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .code-panel pre {
+        padding: 16px;
+    }
+
+    .share-caption,
+    .detail-description,
+    .snippet-description {
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 12px 10px;
+    }
+
+    .topbar {
+        padding: 10px;
+    }
+
+    .nav-brand {
+        gap: 6px;
+        font-size: 12px;
+    }
+
+    .brand-mark {
+        width: 30px;
+    }
+
+    .nav-links a {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .card,
+    .hero-card {
+        border-radius: 6px;
+    }
+
+    .page-header {
+        padding: 20px 16px 18px;
+    }
+
+    .page-header h1,
+    .detail-heading h1 {
+        font-size: 26px;
+        overflow-wrap: anywhere;
+    }
+
+    .feed-heading h1 {
+        font-size: 28px;
+    }
+
+    .hero-card {
+        padding: 42px 18px;
+    }
+
+    .hero-copy {
+        font-size: 15px;
+        line-height: 1.65;
+    }
+
+    .form-panel,
+    .student-profile,
+    .empty-state {
+        padding: 20px 16px;
+    }
+
+    .brand-panel {
+        padding: 24px 18px;
+    }
+
+    .form-actions {
+        padding: 18px 16px;
+    }
+
+    .feed-section {
+        padding: 16px 12px;
+    }
+
+    .snippet-card {
+        padding: 14px;
+    }
+
+    .snippet-card pre,
+    .code-panel pre {
+        font-size: 11px;
+        overflow-wrap: anywhere;
+    }
+
+    .detail-heading h1 {
+        line-height: 1.2;
+    }
+
+    .share-panel {
+        padding: 14px;
+    }
+
+    .profile-row {
+        padding: 14px;
+    }
+
+    input,
+    textarea,
+    select,
+    .form-control {
+        min-width: 0;
+        font-size: 16px;
+    }
+}
