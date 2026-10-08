@@ -1518,6 +1518,10 @@ select:focus {
     background: linear-gradient(180deg, rgba(20, 20, 32, 0.98), rgba(12, 12, 20, 0.95));
 }
 
+.form-panel {
+    background: rgba(18, 18, 30, 0.92);
+}
+
 .brand-badge {
     border-color: rgba(178, 140, 255, 0.25);
 }
@@ -1541,6 +1545,12 @@ select:focus {
 
 .form-actions {
     border-color: rgba(178, 140, 255, 0.16);
+}
+
+.field-errors span {
+    border-left-color: var(--accent);
+    background: rgba(178, 140, 255, 0.08);
+    color: #e3d6ff;
 }
 
 @media (max-width: 1024px) {
