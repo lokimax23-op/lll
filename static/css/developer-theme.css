@@ -1288,21 +1288,21 @@ select:focus {
     --input: #191927;
     --border: #403456;
     --accent: #b28cff;
-    --accent-strong: #4f8cff;
-    --secondary: #83b3ff;
+    --accent-strong: #8b5cf6;
+    --secondary: #c4a7ff;
     --text: #f4f1ff;
     --muted: #aaa6bf;
-    --success: #83b3ff;
+    --success: #a78bfa;
     --red: #b28cff;
 }
 
 body {
     color: var(--text);
-    background: radial-gradient(ellipse at 82% 0%, rgba(139, 92, 246, 0.14), transparent 34%), radial-gradient(ellipse at 0% 88%, rgba(59, 130, 246, 0.08), transparent 30%), linear-gradient(145deg, #07070c, #10101b 58%, #080910);
+    background: radial-gradient(ellipse at 82% 0%, rgba(139, 92, 246, 0.14), transparent 34%), radial-gradient(ellipse at 0% 88%, rgba(139, 92, 246, 0.08), transparent 30%), linear-gradient(145deg, #07070c, #10101b 58%, #080910);
 }
 
 body::before {
-    background-image: linear-gradient(rgba(178, 140, 255, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(79, 140, 255, 0.035) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(178, 140, 255, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(178, 140, 255, 0.035) 1px, transparent 1px);
 }
 
 .topbar {
@@ -1337,7 +1337,7 @@ body::before {
 
 .nav-links a:hover {
     color: var(--secondary);
-    background: rgba(79, 140, 255, 0.09);
+    background: rgba(178, 140, 255, 0.09);
 }
 
 .user-greeting,
@@ -1365,12 +1365,12 @@ body::before {
 }
 
 .btn-primary {
-    background: linear-gradient(120deg, #a879f7, #4f8cff);
+    background: linear-gradient(120deg, #a879f7, #8b5cf6);
     color: #090811;
 }
 
 .btn-primary:hover {
-    background: linear-gradient(120deg, #bd9aff, #75a8ff);
+    background: linear-gradient(120deg, #bd9aff, #a78bfa);
 }
 
 .btn-secondary {
@@ -1452,7 +1452,7 @@ body::before {
 }
 
 .data-table tbody tr:hover {
-    background: rgba(79, 140, 255, 0.06);
+    background: rgba(178, 140, 255, 0.06);
 }
 
 .student-name,
@@ -1461,7 +1461,7 @@ body::before {
 .back-link,
 .detail-author a,
 .submission-share a {
-    color: #9fc2ff;
+    color: #c4a7ff;
 }
 
 .student-name:hover,
@@ -1499,9 +1499,9 @@ select:focus {
 }
 
 .alert {
-    border-color: rgba(79, 140, 255, 0.3);
-    background: rgba(79, 140, 255, 0.08);
-    color: #d8e6ff;
+    border-color: rgba(178, 140, 255, 0.3);
+    background: rgba(178, 140, 255, 0.08);
+    color: #e3d6ff;
 }
 
 .alert-success {
@@ -1512,6 +1512,35 @@ select:focus {
 
 :focus-visible {
     outline-color: var(--secondary);
+}
+
+.brand-panel {
+    background: linear-gradient(180deg, rgba(20, 20, 32, 0.98), rgba(12, 12, 20, 0.95));
+}
+
+.brand-badge {
+    border-color: rgba(178, 140, 255, 0.25);
+}
+
+.dot {
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(178, 140, 255, 0.7);
+}
+
+.login-btn,
+.logout-btn {
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    color: #090811;
+}
+
+.login-btn:hover,
+.logout-btn:hover {
+    border-color: var(--secondary);
+    color: var(--secondary);
+}
+
+.form-actions {
+    border-color: rgba(178, 140, 255, 0.16);
 }
 
 @media (max-width: 1024px) {
